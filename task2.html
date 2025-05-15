@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Stopwatch</title>
+  <style>
+    /* Page background and center content */
+    body {
+      background-color: #1e1e2f;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding-top: 100px;
+    }
+
+    /* Stopwatch time display */
+    #display {
+      font-size: 48px;
+      margin-bottom: 20px;
+    }
+
+    /* Button styles */
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      margin: 5px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    /* Lap list styles */
+    #laps {
+      margin-top: 20px;
+      list-style: none;
+      padding: 0;
+    }
+
+    #laps li {
+      border-bottom: 1px solid #444;
+      padding: 5px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Simple Stopwatch</h1>
+
+  <!-- Time display -->
+  <div id="display">00:00:00</div>
+
+  <!-- Buttons -->
+  <button onclick="startStop()">Start</button>
+  <button onclick="pause()">Pause</button>
+  <button onclick="reset()">Reset</button>
+  <button onclick="lap()">Lap</button>
+
+  <!-- List to show lap times -->
+  <ul id="laps"></ul>
+
+  <script>
+    // Variables to keep track of time
+    let startTime;
+    let elapsedTime = 0;
+    let timerInterval;
+
+    // Update the time display
+    function updateTime() {
+      const time = Date.now() - startTime + elapsedTime;
+
+      const hours = Math.floor(time / 3600000);
+      const minutes = Math.floor((time % 3600000) / 60000);
+      const seconds = Math.floor((time % 60000) / 1000);
+
+      // Show time in HH:MM:SS format
+      document.getElementById("display").textContent =
+        `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+    }
+
+    // Add leading zero if needed (e.g., 3 → 03)
+    function pad(number) {
+      return number.toString().padStart(2, '0');
+    }
+
+    // Start the stopwatch
+    function startStop() {
+      if (!timerInterval) {
+        startTime = Date.now();
+        timerInterval = setInterval(updateTime, 1000);
+      }
+    }
+
+    // Pause the stopwatch
+    function pause() {
+      if (timerInterval) {
+        elapsedTime += Date.now() - startTime;
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+    }
+
+    // Reset the stopwatch
+    function reset() {
+      clearInterval(timerInterval);
+      timerInterval = null;
+      elapsedTime = 0;
+      document.getElementById("display").textContent = "00:00:00";
+      document.getElementById("laps").innerHTML = ""; // Clear laps
+    }
+
+    // Record a lap time
+    function lap() {
+      if (timerInterval) {
+        const lapTime = document.getElementById("display").textContent;
+        const li = document.createElement("li");
+        li.textContent = `Lap: ${lapTime}`;
+        document.getElementById("laps").appendChild(li);
+      }
+    }
+  </script>
+
+</body>
+</html>
